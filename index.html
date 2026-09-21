@@ -454,6 +454,49 @@ footer{
   .newsletter-box{ padding:26px; }
 }
 
+
+/* ---------- project detail extras ---------- */
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--ink-soft);
+  text-decoration:none;
+  margin-bottom:28px;
+}
+.back-link:hover{ color:var(--blueprint); }
+.detail-meta{
+  display:flex;
+  gap:28px;
+  flex-wrap:wrap;
+  margin:28px 0 8px;
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--ink-soft);
+}
+.detail-meta strong{ color:var(--ink); display:block; font-family:var(--display); font-size:14px; margin-bottom:2px;}
+.log-entry.linked{
+  text-decoration:none;
+  color:inherit;
+  cursor:pointer;
+  transition:background .15s ease, padding-left .15s ease;
+}
+.log-entry.linked:hover{
+  background:var(--white);
+  padding-left:10px;
+  padding-right:10px;
+}
+.log-entry.linked:hover h3{ color:var(--blueprint); }
+.log-entry .view-more{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--blueprint);
+  margin-top:8px;
+  display:inline-block;
+}
+
 </style>
 </head>
 <body>
@@ -530,35 +573,38 @@ footer{
       <p class="eyebrow">latest from the build log</p>
       <div class="log">
 
-        <div class="log-entry">
+        <a href="project-slopscout.html" class="log-entry linked">
           <span class="log-date">2026.09</span>
           <div class="log-body">
             <h3>SlopScout</h3>
             <p>A Chrome extension that flags AI-generated "slop" content in real time while scrolling X — heuristic-based, kept free and fast.</p>
             <div class="log-tags"><span>Chrome extension</span><span>X / Twitter</span></div>
+          <span class="view-more">View project →</span>
           </div>
           <span class="stamp">SHIPPED</span>
-        </div>
+        </a>
 
-        <div class="log-entry">
+        <a href="project-fiverr-chatbot.html" class="log-entry linked">
           <span class="log-date">2026.08</span>
           <div class="log-body">
             <h3>Fiverr AI chatbot gig</h3>
             <p>Opened a gig building custom AI chatbots for small businesses — near-term cash flow while bigger products are in motion.</p>
             <div class="log-tags"><span>Claude API</span><span>Client work</span></div>
+          <span class="view-more">View project →</span>
           </div>
           <span class="stamp">SHIPPED</span>
-        </div>
+        </a>
 
-        <div class="log-entry">
+        <a href="project-kairox.html" class="log-entry linked">
           <span class="log-date">2026.07</span>
           <div class="log-body">
             <h3>KairoX</h3>
             <p>A gamified self-improvement micro-SaaS — XP, streaks, badges, and AI-generated daily tasks to keep people consistent.</p>
             <div class="log-tags"><span>Next.js</span><span>Micro-SaaS</span></div>
+          <span class="view-more">View project →</span>
           </div>
           <span class="stamp">SHIPPED</span>
-        </div>
+        </a>
 
       </div>
       <div class="btn-row">
