@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Log — Sarthak Arya</title>
+<meta name="description" content="A running log of what Sarthak Arya has built and shipped — AI tools, bots, and micro-SaaS.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root{
+  --canvas:#F5F4F0;
+  --canvas-2:#EEEDE7;
+  --ink:#1B1F23;
+  --ink-soft:#4B5259;
+  --blueprint:#2F5D8A;
+  --blueprint-soft:#6C90AF;
+  --signal:#DC4405;
+  --grid:#DADFE3;
+  --white:#FFFFFF;
+
+  --display: 'Space Grotesk', sans-serif;
+  --body: 'Source Serif 4', serif;
+  --mono: 'JetBrains Mono', monospace;
+
+  --sidebar-w: 84px;
+  --max-w: 920px;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--canvas);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+}
+
+a{color:var(--blueprint);}
+a:focus-visible, button:focus-visible, input:focus-visible{
+  outline:2px solid var(--signal);
+  outline-offset:3px;
+}
+
+/* ---------- background grid ---------- */
+.grid-bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity:0.5;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+}
+
+/* ---------- sidebar nav ---------- */
+.sidebar{
+  position:fixed;
+  top:0; left:0; bottom:0;
+  width:var(--sidebar-w);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  padding:24px 0 20px;
+  border-right:1px solid var(--grid);
+  z-index:20;
+  background:var(--canvas);
+}
+.sidebar .mark{
+  font-family:var(--display);
+  font-weight:700;
+  font-size:15px;
+  letter-spacing:0.02em;
+  color:var(--ink);
+  text-decoration:none;
+  writing-mode:horizontal-tb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:40px; height:40px;
+  border:1.5px solid var(--ink);
+  border-radius:50%;
+}
+.sidebar nav{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:22px;
+}
+.sidebar nav a{
+  font-family:var(--mono);
+  font-size:10.5px;
+  letter-spacing:0.08em;
+  text-decoration:none;
+  color:var(--ink-soft);
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  transform:rotate(180deg);
+  padding:6px 2px;
+  border-left:2px solid transparent;
+  transition:color .15s ease, border-color .15s ease;
+}
+.sidebar nav a:hover{ color:var(--blueprint); }
+.sidebar nav a.active{
+  color:var(--ink);
+  border-left-color:var(--signal);
+}
+.sidebar .coord{
+  font-family:var(--mono);
+  font-size:9px;
+  color:var(--grid);
+  writing-mode:vertical-rl;
+  letter-spacing:0.05em;
+}
+
+.mobile-nav{
+  display:none;
+}
+
+/* ---------- layout ---------- */
+main{
+  position:relative;
+  z-index:1;
+  margin-left:var(--sidebar-w);
+}
+.wrap{
+  max-width:var(--max-w);
+  margin:0 auto;
+  padding:0 32px;
+}
+section{ padding:96px 0; }
+section.tight{ padding:64px 0; }
+
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:0.08em;
+  color:var(--blueprint);
+  text-transform:uppercase;
+  margin:0 0 18px;
+}
+.eyebrow::before{
+  content:"";
+  width:14px; height:1px;
+  background:var(--signal);
+  display:inline-block;
+}
+
+h1,h2,h3{
+  font-family:var(--display);
+  font-weight:600;
+  letter-spacing:-0.01em;
+  margin:0 0 0.4em;
+  color:var(--ink);
+}
+h1{ font-size:clamp(2.4rem, 6vw, 4.4rem); line-height:1.02; font-weight:700;}
+h2{ font-size:clamp(1.6rem, 3.4vw, 2.3rem); }
+h3{ font-size:1.15rem; }
+
+p{ margin:0 0 1em; color:var(--ink-soft); max-width:62ch; }
+.lede{ font-size:1.2rem; color:var(--ink); max-width:56ch; }
+
+.divider{
+  border:none;
+  border-top:1px solid var(--grid);
+  margin:0;
+  position:relative;
+}
+.divider .coord-label{
+  position:absolute;
+  top:-9px; left:0;
+  background:var(--canvas);
+  font-family:var(--mono);
+  font-size:10.5px;
+  color:var(--ink-soft);
+  letter-spacing:0.05em;
+  padding-right:10px;
+}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:var(--mono);
+  font-size:13px;
+  letter-spacing:0.03em;
+  text-decoration:none;
+  padding:13px 22px;
+  border-radius:2px;
+  border:1.5px solid var(--ink);
+  color:var(--ink);
+  transition:background .15s ease, color .15s ease, transform .15s ease;
+}
+.btn:hover{ transform:translateY(-1px); }
+.btn.primary{
+  background:var(--ink);
+  color:var(--canvas);
+}
+.btn.primary:hover{ background:var(--blueprint); border-color:var(--blueprint); }
+.btn.accent{
+  border-color:var(--signal);
+  color:var(--signal);
+}
+.btn.accent:hover{ background:var(--signal); color:var(--white); }
+.btn-row{ display:flex; gap:14px; flex-wrap:wrap; margin-top:32px; }
+
+/* ---------- build log (signature element) ---------- */
+.log{
+  display:flex;
+  flex-direction:column;
+}
+.log-entry{
+  display:grid;
+  grid-template-columns:120px 1fr auto;
+  gap:24px;
+  align-items:start;
+  padding:26px 0;
+  border-top:1px solid var(--grid);
+  position:relative;
+}
+.log-entry:last-child{ border-bottom:1px solid var(--grid); }
+.log-date{
+  font-family:var(--mono);
+  font-size:12.5px;
+  color:var(--ink-soft);
+  padding-top:4px;
+}
+.log-body h3{ margin-bottom:6px; }
+.log-body p{ margin-bottom:0; }
+.log-tags{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.log-tags span{
+  font-family:var(--mono);
+  font-size:10.5px;
+  color:var(--blueprint);
+  border:1px solid var(--blueprint-soft);
+  padding:2px 8px;
+  border-radius:20px;
+}
+.stamp{
+  font-family:var(--display);
+  font-weight:700;
+  font-size:12px;
+  letter-spacing:0.12em;
+  color:var(--signal);
+  border:2px solid var(--signal);
+  border-radius:4px;
+  padding:5px 10px;
+  transform:rotate(-6deg);
+  white-space:nowrap;
+  align-self:center;
+  opacity:0;
+  animation: stampIn .5s ease forwards;
+  animation-delay:.15s;
+}
+@keyframes stampIn{
+  0%{ opacity:0; transform:rotate(-6deg) scale(1.4); }
+  70%{ opacity:1; }
+  100%{ opacity:1; transform:rotate(-6deg) scale(1); }
+}
+
+/* ---------- grids ---------- */
+.grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:36px;
+}
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:48px;
+}
+.card{
+  border:1px solid var(--grid);
+  background:var(--white);
+  padding:28px 24px;
+  border-radius:2px;
+}
+.card .num{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--signal);
+  display:block;
+  margin-bottom:14px;
+}
+
+/* ---------- product card ---------- */
+.product{
+  border:1px solid var(--grid);
+  background:var(--white);
+  padding:32px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  position:relative;
+}
+.product .price{
+  font-family:var(--mono);
+  color:var(--blueprint);
+  font-size:14px;
+}
+.status-tag{
+  position:absolute;
+  top:20px; right:20px;
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.06em;
+  color:var(--ink-soft);
+  border:1px dashed var(--grid);
+  padding:3px 8px;
+}
+
+/* ---------- footer / newsletter ---------- */
+footer{
+  border-top:1px solid var(--grid);
+  padding:56px 0 48px;
+}
+.foot-grid{
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:24px;
+}
+.foot-links{
+  display:flex;
+  gap:22px;
+  font-family:var(--mono);
+  font-size:12.5px;
+}
+.foot-links a{ color:var(--ink-soft); text-decoration:none; }
+.foot-links a:hover{ color:var(--blueprint); }
+.foot-note{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--ink-soft);
+}
+
+.newsletter-box{
+  border:1.5px solid var(--ink);
+  padding:40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:32px;
+  flex-wrap:wrap;
+  background:var(--white);
+}
+.nl-form{
+  display:flex;
+  gap:10px;
+  flex:1;
+  min-width:260px;
+}
+.nl-form input[type=email]{
+  flex:1;
+  font-family:var(--mono);
+  font-size:13.5px;
+  padding:13px 14px;
+  border:1.5px solid var(--ink);
+  background:var(--canvas);
+  color:var(--ink);
+}
+.nl-note{
+  font-family:var(--mono);
+  font-size:11px;
+  color:var(--ink-soft);
+  margin-top:10px;
+}
+
+/* ---------- contact ---------- */
+.contact-list{ list-style:none; padding:0; margin:0; }
+.contact-list li{
+  border-top:1px solid var(--grid);
+  padding:22px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.contact-list li:last-child{ border-bottom:1px solid var(--grid); }
+.contact-list .label{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--ink-soft);
+  letter-spacing:0.05em;
+}
+.contact-list a{
+  font-family:var(--display);
+  font-size:1.2rem;
+  text-decoration:none;
+  color:var(--ink);
+}
+.contact-list a:hover{ color:var(--blueprint); }
+
+/* ---------- responsive ---------- */
+@media (max-width:860px){
+  .grid-3, .grid-2{ grid-template-columns:1fr; }
+  .log-entry{ grid-template-columns:1fr; gap:10px; }
+  .stamp{ justify-self:start; }
+}
+
+@media (max-width:640px){
+  :root{ --sidebar-w:0px; }
+  .sidebar{ display:none; }
+  main{ margin-left:0; }
+  .mobile-nav{
+    display:flex;
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:var(--canvas);
+    border-bottom:1px solid var(--grid);
+    padding:16px 20px;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .mobile-nav .mark{
+    font-family:var(--display);
+    font-weight:700;
+    text-decoration:none;
+    color:var(--ink);
+  }
+  .mobile-nav select{
+    font-family:var(--mono);
+    font-size:12px;
+    background:var(--canvas);
+    border:1px solid var(--ink);
+    padding:6px 8px;
+    color:var(--ink);
+  }
+  section{ padding:56px 0; }
+  .wrap{ padding:0 20px; }
+  .newsletter-box{ padding:26px; }
+}
+
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<div class="mobile-nav">
+  <a href="index.html" class="mark">SA</a>
+  <select aria-label="Navigate">
+    <option value="">Menu</option>
+    <option value="index.html">Home</option>
+    <option value="about.html">About</option>
+    <option value="work.html">Build Log</option>
+    <option value="products.html">Products</option>
+    <option value="newsletter.html">Newsletter</option>
+    <option value="contact.html">Contact</option>
+  </select>
+</div>
+
+<aside class="sidebar">
+  <a href="index.html" class="mark">SA</a>
+  <nav>
+    <a href="index.html">HOME</a>
+    <a href="about.html">ABOUT</a>
+    <a href="work.html" class="active">BUILD LOG</a>
+    <a href="products.html">PRODUCTS</a>
+    <a href="newsletter.html">NEWSLETTER</a>
+    <a href="contact.html">CONTACT</a>
+  </nav>
+  <span class="coord">28.98°N, 77.71°E — NOIDA</span>
+</aside>
+
+<main>
+  <section style="padding-top:120px;">
+    <div class="wrap">
+      <p class="eyebrow">// build log</p>
+      <h1>Everything I've shipped,<br>in the order I shipped it.</h1>
+      <p class="lede">No highlight reel — just a running record of what got built, working or not, big or small.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section>
+    <div class="wrap">
+      <div class="log">
+
+        <div class="log-entry">
+          <span class="log-date">2026.08</span>
+          <div class="log-body">
+            <h3>Fiverr AI chatbot gig</h3>
+            <p>A Fiverr gig offering custom AI chatbot builds for small businesses — a near-term income vehicle while longer-term products take shape.</p>
+            <div class="log-tags"><span>Claude API</span><span>Freelance</span></div>
+          </div>
+          <span class="stamp">SHIPPED</span>
+        </div>
+
+        <div class="log-entry">
+          <span class="log-date">2026.07</span>
+          <div class="log-body">
+            <h3>KairoX</h3>
+            <p>A gamified self-improvement micro-SaaS: XP, streaks, badges, and AI-generated daily tasks designed to make consistency feel like a game instead of a chore.</p>
+            <div class="log-tags"><span>Next.js</span><span>Prisma</span><span>Micro-SaaS</span></div>
+          </div>
+          <span class="stamp">SHIPPED</span>
+        </div>
+
+        <div class="log-entry">
+          <span class="log-date">2026.06</span>
+          <div class="log-body">
+            <h3>Aanya — WhatsApp AI receptionist</h3>
+            <p>A bilingual (Hindi/English) WhatsApp AI receptionist simulator, built around a dental clinic use case — booking, FAQs, and follow-ups handled conversationally.</p>
+            <div class="log-tags"><span>WhatsApp API</span><span>Bilingual</span></div>
+          </div>
+          <span class="stamp">SHIPPED</span>
+        </div>
+
+        <div class="log-entry">
+          <span class="log-date">2026.05</span>
+          <div class="log-body">
+            <h3>Timeline-to-calendar converter</h3>
+            <p>A small web app that turns messy timelines and schedules into structured calendar entries, powered by the Claude API.</p>
+            <div class="log-tags"><span>Claude API</span><span>Web app</span></div>
+          </div>
+          <span class="stamp">SHIPPED</span>
+        </div>
+
+        <div class="log-entry">
+          <span class="log-date">2026.04</span>
+          <div class="log-body">
+            <h3>Clawde</h3>
+            <p>A local, private AI assistant running on Ollama, Flask, and Telegram — with a Gen Z lobster persona, because it doesn't all have to be serious.</p>
+            <div class="log-tags"><span>Ollama</span><span>Flask</span><span>Telegram</span></div>
+          </div>
+          <span class="stamp">SHIPPED</span>
+        </div>
+
+        <div class="log-entry">
+          <span class="log-date">2026.03</span>
+          <div class="log-body">
+            <h3>Aurex Estates — site audit</h3>
+            <p>Freelance audit of a real estate website, identifying conversion and trust issues and where the funnel was leaking.</p>
+            <div class="log-tags"><span>Audit</span><span>Freelance</span></div>
+          </div>
+          <span class="stamp">SHIPPED</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <section class="tight">
+    <div class="wrap">
+      <div class="newsletter-box">
+        <div>
+          <h3 style="margin-bottom:6px;">Some of this becomes a product.</h3>
+          <p style="margin:0; max-width:44ch;">The tools that turn out useful for more than one person end up here.</p>
+        </div>
+        <a href="products.html" class="btn primary">See products →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot-grid">
+      <span class="foot-note">© 2026 Sarthak Arya. Built solo, shipped in public.</span>
+      <div class="foot-links">
+        <a href="about.html">About</a>
+        <a href="work.html">Build Log</a>
+        <a href="products.html">Products</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var sel = document.querySelector('.mobile-nav select');
+  if (sel) {
+    sel.addEventListener('change', function (e) {
+      if (e.target.value) window.location.href = e.target.value;
+    });
+  }
+
+  var reveal = document.querySelectorAll('.log-entry, .card, .product');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.style.animation = 'none';
+          en.target.classList.add('is-visible');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    reveal.forEach(function (el) { io.observe(el); });
+  }
+
+  var form = document.querySelector('.nl-form');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var btn = form.querySelector('button');
+      var original = btn.textContent;
+      btn.textContent = 'Logged ✓';
+      setTimeout(function () { btn.textContent = original; }, 2200);
+      form.reset();
+    });
+  }
+});
+
+</script>
+</body>
+</html>
